@@ -51,7 +51,7 @@ export default function Login() {
     } else {
       // --- REGISTER FLOW ---
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/register`, { full_name, email, password, role, phone_number });
+        await axios.post(`${import.meta.env.VITE_API_URL}/register`, { full_name: fullName, email, password, role, phone_number: phoneNumber });
 
         setSuccess('Account created successfully! You can now sign in.');
         setIsLoginView(true); // Flip UI back to login mode automatically
