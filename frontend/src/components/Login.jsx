@@ -27,18 +27,18 @@ export default function Login() {
     setSuccess('');
     setIsLoading(true);
 
-    if (isLoginView) {
-      // --- LOGIN FLOW ---
-      try {
+    try {
+      if (isLoginView) {
+        // --- LOGIN FLOW ---
         const res = await axios.post('http://localhost:5000/api/login', {
           email: email,
           password: password
         });
-        
+
         // 1. Save the secure token AND user to localStorage so AuthContext can read them
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
-        
+
         // 2. Redirect based on role
         if (res.data.user.role === 'Admin') {
           navigate('/admin');
@@ -47,13 +47,8 @@ export default function Login() {
         } else {
           navigate('/community');
         }
-        
-      } catch (err) {
-        setError(err.response?.data?.error || 'Invalid credentials');
-      }
-    } else {
-      // --- REGISTER FLOW ---
-      try {
+      } else {
+        // --- REGISTER FLOW ---
         await axios.post('http://localhost:5000/api/register', {
           full_name: fullName,
           email: email,
@@ -61,15 +56,20 @@ export default function Login() {
           role: role,
           phone_number: phoneNumber
         });
-        
+
         setSuccess('Account created successfully! You can now sign in.');
         setIsLoginView(true); // Flip UI back to login mode automatically
         setPassword(''); // Clear password field for security
-      } catch (err) {
-        setError(err.response?.data?.error || 'Registration failed. Server may be unreachable.');
       }
+    } catch (err) {
+      // Handle errors from both login and register flows
+      setError(
+        err.response?.data?.error ||
+        (isLoginView ? 'Invalid credentials' : 'Registration failed. Server may be unreachable.')
+      );
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
