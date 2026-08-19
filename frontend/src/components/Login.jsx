@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Wifi, AlertCircle, CheckCircle } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [isLoginView, setIsLoginView] = useState(true);
@@ -18,8 +18,8 @@ export default function Login() {
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize the navigator
-  const navigate = useNavigate();
+  // Get the login function from context (it sets state + navigates)
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,24 +29,11 @@ export default function Login() {
 
     if (isLoginView) {
       // --- LOGIN FLOW ---
-      try {
-        const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
-
-        // 1. Save the secure token AND user to localStorage so AuthContext can read them
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-
-        // 2. Redirect based on role
-        if (res.data.user.role === 'Admin') {
-          navigate('/admin');
-        } else if (res.data.user.role === 'ISP') {
-          navigate('/dashboard');
-        } else {
-          navigate('/community');
-        }
-
-      } catch (err) {
-        setError(err.response?.data?.error || 'Invalid credentials');
+      // Delegates to AuthContext.login() which sets user state AND navigates.
+      // Without this, ProtectedRoute sees user=null and bounces back to /.
+      const result = await login(email, password);
+      if (!result.success) {
+        setError(result.error || 'Invalid credentials');
       }
     } else {
       // --- REGISTER FLOW ---
