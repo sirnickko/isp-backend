@@ -5,19 +5,19 @@ import axios from 'axios';
 
 export default function Login() {
   const [isLoginView, setIsLoginView] = useState(true);
-  
+
   // Form State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('Admin');
   const [phoneNumber, setPhoneNumber] = useState('');
-  
+
   // UI State
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Initialize the navigator
   const navigate = useNavigate();
 
@@ -27,13 +27,10 @@ export default function Login() {
     setSuccess('');
     setIsLoading(true);
 
-    try {
-      if (isLoginView) {
-        // --- LOGIN FLOW ---
-        const res = await axios.post('http://localhost:5000/api/login', {
-          email: email,
-          password: password
-        });
+    if (isLoginView) {
+      // --- LOGIN FLOW ---
+      try {
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
 
         // 1. Save the secure token AND user to localStorage so AuthContext can read them
         localStorage.setItem('token', res.data.token);
@@ -47,35 +44,29 @@ export default function Login() {
         } else {
           navigate('/community');
         }
-      } else {
-        // --- REGISTER FLOW ---
-        await axios.post('http://localhost:5000/api/register', {
-          full_name: fullName,
-          email: email,
-          password: password,
-          role: role,
-          phone_number: phoneNumber
-        });
+
+      } catch (err) {
+        setError(err.response?.data?.error || 'Invalid credentials');
+      }
+    } else {
+      // --- REGISTER FLOW ---
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/register`, { full_name, email, password, role, phone_number });
 
         setSuccess('Account created successfully! You can now sign in.');
         setIsLoginView(true); // Flip UI back to login mode automatically
         setPassword(''); // Clear password field for security
+      } catch (err) {
+        setError(err.response?.data?.error || 'Registration failed. Server may be unreachable.');
       }
-    } catch (err) {
-      // Handle errors from both login and register flows
-      setError(
-        err.response?.data?.error ||
-        (isLoginView ? 'Invalid credentials' : 'Registration failed. Server may be unreachable.')
-      );
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
       <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
-        
+
         {/* Header Section */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ display: 'inline-flex', padding: '1rem', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.1)', marginBottom: '1rem' }}>
@@ -106,7 +97,7 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          
+
           {/* Extra Fields (Only visible during Registration) */}
           {!isLoginView && (
             <>
@@ -147,8 +138,8 @@ export default function Login() {
 
         {/* The Toggle Link */}
         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => { setIsLoginView(!isLoginView); setError(''); setSuccess(''); }}
             style={{ background: 'none', border: 'none', color: 'var(--accent-color)', fontSize: '0.875rem', cursor: 'pointer', textDecoration: 'underline' }}
           >
