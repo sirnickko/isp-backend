@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { PackagePlus, AlertCircle, CheckCircle } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function AddPackage() {
   const { token } = useAuth();
@@ -21,7 +22,7 @@ export default function AddPackage() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/packages', {
+      await axios.post(`${API_BASE}/packages`, {
         package_name: packageName,
         speed_mbps: speedMbps,
         price: price

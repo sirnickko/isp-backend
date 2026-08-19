@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Link as LinkIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function SubscribeCustomer() {
   const { token, user } = useAuth();
@@ -20,7 +21,7 @@ export default function SubscribeCustomer() {
     // Fetch customers (Assuming a new endpoint or fetching from some list)
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users?role=Community', {
+        const res = await axios.get(`${API_BASE}/users?role=Community`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCustomers(res.data);
@@ -31,7 +32,7 @@ export default function SubscribeCustomer() {
 
     const fetchPackages = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/packages');
+        const res = await axios.get(`${API_BASE}/packages`);
         // Filter for this ISP
         const myPkgs = res.data.filter(p => p.isp_id === user.id);
         setPackages(myPkgs);
@@ -51,7 +52,7 @@ export default function SubscribeCustomer() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/installations', {
+      await axios.post(`${API_BASE}/installations`, {
         customer_id: selectedCustomerId,
         isp_id: user.id,
         package_id: selectedPackageId

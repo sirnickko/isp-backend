@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Package, Wrench, LogOut } from 'lucide-react';
+import API_BASE from '../api';
 
 export default function ISPDashboard() {
   const { user, token, logout } = useAuth();
@@ -12,14 +13,14 @@ export default function ISPDashboard() {
     const fetchData = async () => {
       try {
         // Fetch Packages
-        const pkgsRes = await fetch('http://localhost:5000/api/packages');
+        const pkgsRes = await fetch(`${API_BASE}/packages`);
         const pkgsData = await pkgsRes.json();
         // Filter packages by this ISP's ID
         const myPkgs = pkgsData.filter(p => p.isp_id === user.id);
         setPackages(myPkgs);
 
         // Fetch Installations
-        const instRes = await fetch('http://localhost:5000/api/installations', {
+        const instRes = await fetch(`${API_BASE}/installations`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const instData = await instRes.json();
@@ -37,7 +38,7 @@ export default function ISPDashboard() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/installations/${id}/status`, {
+      const res = await fetch(`${API_BASE}/installations/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

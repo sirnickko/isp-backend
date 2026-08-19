@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function RegisterCustomer() {
   const [fullName, setFullName] = useState('');
@@ -19,7 +20,7 @@ export default function RegisterCustomer() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/register', {
+      await axios.post(`${API_BASE}/register`, {
         full_name: fullName,
         email: email,
         password: password,

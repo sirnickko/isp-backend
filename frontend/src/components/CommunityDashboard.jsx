@@ -7,7 +7,9 @@ import {
   AlertCircle, X
 } from 'lucide-react';
 
-const API = 'http://localhost:5000';
+import API_BASE from '../api';
+
+const API = API_BASE;
 
 // Reusable Alert component
 function Alert({ type, msg, onClose }) {

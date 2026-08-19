@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { PieChart, TrendingUp, Users } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function Reports() {
   const { token } = useAuth();
@@ -11,7 +12,7 @@ export default function Reports() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/payments', {
+        const res = await axios.get(`${API_BASE}/payments`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPayments(res.data);

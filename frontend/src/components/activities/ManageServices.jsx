@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Activity, Power, PowerOff } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function ManageServices() {
   const { token } = useAuth();
@@ -14,7 +15,7 @@ export default function ManageServices() {
 
   const fetchSubscriptions = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/subscriptions', {
+      const res = await axios.get(`${API_BASE}/subscriptions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubscriptions(res.data);
@@ -28,7 +29,7 @@ export default function ManageServices() {
   const toggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === 'Active' ? 'Suspended' : 'Active';
     try {
-      const res = await axios.patch(`http://localhost:5000/api/subscriptions/${id}/status`, { status: newStatus }, {
+      const res = await axios.patch(`${API_BASE}/subscriptions/${id}/status`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.status === 200) {

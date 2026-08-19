@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, Activity, DollarSign, AlertTriangle, ShieldAlert, BarChart3 } from 'lucide-react';
+import API_BASE from '../api';
 
 export default function AdminDashboard() {
   const { user, token, logout } = useAuth();
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/dashboard', {
+      const res = await axios.get(`${API_BASE}/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMetrics(res.data.metrics);
@@ -38,7 +39,7 @@ export default function AdminDashboard() {
 
     setSuspendLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/suspend-overdue', {}, {
+      const res = await axios.post(`${API_BASE}/admin/suspend-overdue`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert(res.data.message);

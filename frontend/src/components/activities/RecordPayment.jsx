@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { DollarSign, AlertCircle, CheckCircle } from 'lucide-react';
+import API_BASE from '../../api';
 
 export default function RecordPayment() {
   const { token } = useAuth();
@@ -20,7 +21,7 @@ export default function RecordPayment() {
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/subscriptions', {
+        const res = await axios.get(`${API_BASE}/subscriptions`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // Only show active or suspended subscriptions (filter if necessary, but ISP can see them all)
@@ -40,7 +41,7 @@ export default function RecordPayment() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/payments', {
+      await axios.post(`${API_BASE}/payments`, {
         subscription_id: selectedSubscriptionId,
         amount: amount,
         payment_method: paymentMethod,
