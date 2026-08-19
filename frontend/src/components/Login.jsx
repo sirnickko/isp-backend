@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Wifi, AlertCircle, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import API_BASE from '../api';
 
 export default function Login() {
   const [isLoginView, setIsLoginView] = useState(true);
@@ -38,7 +39,7 @@ export default function Login() {
     } else {
       // --- REGISTER FLOW ---
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/register`, { full_name: fullName, email, password, role, phone_number: phoneNumber });
+        await axios.post(`${API_BASE}/register`, { full_name: fullName, email, password, role, phone_number: phoneNumber });
 
         setSuccess('Account created successfully! You can now sign in.');
         setIsLoginView(true); // Flip UI back to login mode automatically
