@@ -11,10 +11,27 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 3. Set up Middleware
-app.use(cors()); // Allows your future React app to communicate with this API
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'http://localhost:3000',
+];
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (e.g. Postman, curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        // Also allow any *.vercel.app subdomain dynamically
+        if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+        return callback(new Error('CORS policy: origin not allowed'));
+    },
+    credentials: true
+}));
 app.use(express.json()); // Allows the server to read JSON data from incoming requests
 
 // 4. Create Database Connection Pool
+// NOTE: Aiven MySQL requires SSL — the ssl.rejectUnauthorized: false
+//       trusts Aiven's certificate without needing to bundle the CA file.
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -23,7 +40,10 @@ const db = mysql.createPool({
     port: process.env.DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: {
+        rejectUnauthorized: false // Required for Aiven cloud MySQL
+    }
 });
 
 // 5. Test the Database Connection
