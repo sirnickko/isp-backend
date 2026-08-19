@@ -34,7 +34,7 @@ function BrowsePackages({ token, userId }) {
   const [alert, setAlert] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API}/api/packages`)
+    axios.get(`${API}/packages`)
       .then(r => setPackages(r.data))
       .catch(() => setAlert({ type:'error', msg:'Failed to load packages.' }))
       .finally(() => setLoading(false));
@@ -42,7 +42,7 @@ function BrowsePackages({ token, userId }) {
 
   const subscribe = async (pkg) => {
     try {
-      await axios.post(`${API}/api/installations`, {
+      await axios.post(`${API}/installations`, {
         isp_id: pkg.isp_id,
         package_id: pkg.package_id
       }, { headers: { Authorization: `Bearer ${token}` } });
@@ -95,7 +95,7 @@ function MyRequests({ token }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/api/installations`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API}/installations`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setRequests(r.data))
       .finally(() => setLoading(false));
   }, [token]);
@@ -136,7 +136,7 @@ function MySubscriptions({ token }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/api/subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API}/subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setSubs(r.data))
       .finally(() => setLoading(false));
   }, [token]);
@@ -174,7 +174,7 @@ function RecordPayment({ token }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get(`${API}/api/subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API}/subscriptions`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setSubs(r.data.filter(s => s.status === 'Active')));
   }, [token]);
 
@@ -183,7 +183,7 @@ function RecordPayment({ token }) {
     setLoading(true);
     setAlert(null);
     try {
-      await axios.post(`${API}/api/payments`, form, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post(`${API}/payments`, form, { headers: { Authorization: `Bearer ${token}` } });
       setAlert({ type:'success', msg:'Payment recorded successfully!' });
       setForm({ subscription_id:'', amount:'', payment_method:'Mobile Money', transaction_ref:'' });
     } catch (err) {
@@ -237,7 +237,7 @@ function PaymentHistory({ token }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/api/payments`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API}/payments`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setPayments(r.data))
       .finally(() => setLoading(false));
   }, [token]);
@@ -286,7 +286,7 @@ function SubmitComplaint({ token }) {
 
   useEffect(() => {
     // Fetch all packages to get ISP list
-    axios.get(`${API}/api/packages`)
+    axios.get(`${API}/packages`)
       .then(r => {
         const unique = [];
         const seen = new Set();
@@ -302,7 +302,7 @@ function SubmitComplaint({ token }) {
     setLoading(true);
     setAlert(null);
     try {
-      await axios.post(`${API}/api/complaints`, form, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post(`${API}/complaints`, form, { headers: { Authorization: `Bearer ${token}` } });
       setAlert({ type:'success', msg:'Complaint submitted. Your ISP will be notified.' });
       setForm({ isp_id:'', issue_type:'Slow Speed', description:'' });
     } catch (err) {
@@ -351,7 +351,7 @@ function MyComplaints({ token }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/api/complaints`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API}/complaints`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setComplaints(r.data))
       .finally(() => setLoading(false));
   }, [token]);
